@@ -1,52 +1,43 @@
 #include<stdio.h>
+int temp[10],k=0;
 
-void quicksort(int a[] , int, int);
-int partition(int[], int, int);
+void topo(int n, int indegree[10], int a[10][10]){
+    int i, j;
+    for (i = 1; i <= n; i++)
+    {
+        if(indegree[i] == 0) {
+            indegree[i] = 1;
+            temp[++k] = i;
+            for (j = 1; j <= n; j++) {
+                if(a[i][j] == 1 && indegree[j] != 1)
+                indegree[j]--;
+            }
+            i = 0;
+        }
+    }
+}
 
 int main() {
-    int i, n, a[20], ch = 1;
-    while(ch) {
-        printf("Enter the no.of Elements: \n");
-        scanf("%d", &n);
-        printf("Enter the elements in the array: \n");
-        for(i = 0; i < n; i++)
-            scanf("%d", &a[i]);
-        quicksort(a, 0, n-1);
-        printf("\nThe sorted array elements are \n");
-        for(i = 0; i < n; i++)
-            printf("\n%d", a[i]);
-        printf("\nDo you wish to continue (0/1) \n");
-        scanf("%d", &ch);
+    int i, j, n, indegree[10], a[10][10];
+    printf("Enter no.of vertices: ");
+    scanf("%d", &n);
+    for(i = 1;i <= n; i++)
+    indegree[i] = 0;
+    printf("Enter the adjacency matrix: \n");
+    for(i = 1; i <= n; i++)
+    for(j = 1; j <= n; j++){
+        scanf("%d", &a[i][j]);
+        if (a[i][j] == 1)
+        indegree[j]++;
     }
-}
-
-void quicksort(int a[], int low, int high) {
-    int mid;
-    if (low < high) {
-        mid = partition(a, low, high);
-        quicksort(a, low, mid-1);
-        quicksort(a, mid+1, high);
+    topo(n, indegree, a);
+    if (k != n)
+    {
+        printf("Topological ordering is not possible \n");
+    } else {
+        printf("\n topological ordering is : \n");
+        for(i = 1; i <= k; i++)
+        printf("v%d\t", temp[i]);
     }
-}
-
-int partition(int a[], int low, int high) {
-    int key, i, j, temp, k;
-    key = a[low];
-    i = low + 1;
-    j = high;
-    while(i <= j) {
-        while(i <= high && key >= a[i])
-        i = i + 1;
-        while(key < a[j])
-        j = j - 1;
-        if (i < j){
-            temp = a[i];
-            a[i] = a[j];
-            a[j] = temp;
-        } 
-    } 
-    temp = a[j];
-    a[j] = a[low];
-    a[low] = temp;
-    return j;
+    return 0;
 }
